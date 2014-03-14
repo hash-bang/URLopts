@@ -14,7 +14,7 @@ Installation
 ============
 Download this repo and copy into your application directory.
 
-Alternatively, install with [Sparks](http://getsparks.org/).
+Alternatively, install with [Composer](http://getcomposer.org).
 
 Examples
 ========
@@ -43,14 +43,14 @@ The example CodeIgniter controller would look something like this:
 	class Users extends CI_Controller {
 
 		function List() {
-			$this->load->spark('urlopts/1.0.0');
+			$this->URLopts = new URLopts();
 
 			// Setup various DB query parameters
 			$offset = 0;
 			$limit = 30;
 			$where = array();
 
-			$params = $this->urlopts->Get(); // Process this URL into an accessible array object of parameters
+			$params = $this->URLopts->Get(); // Process this URL into an accessible array object of parameters
 
 			if (isset($params['page'])) // Are we asking for a specific page (e.g. http://website.com/users/list/page/5)
 				$offset = $limit * $params['page'];
@@ -82,20 +82,20 @@ This library also provides ways to return a URL with various options turned off/
 
 For example these functions can be placed in your view to return the current URL again with various options set:
 
-	<?=$this->urlopts->Edit('foo=bar')?>
+	<?=$this->URLopts->Edit('foo=bar')?>
 
 The above sets 'foo' to 'bar' in the URL. If the current URL was 'http://website.com/users/list' the above would return 'http://website.com/users/list/foo/bar'.
 
-	<?=$this->urlopts->Edit('+foo')?>
+	<?=$this->URLopts->Edit('+foo')?>
 
 The above sets 'foo' to '1' in the URL. If the current URL was 'http://website.com/users/list' the above would return 'http://website.com/users/list/foo/1'.
 
-	<?=$this->urlopts->Edit('-foo')?>
+	<?=$this->URLopts->Edit('-foo')?>
 
 The above removes 'foo' from the URL. If the current URL was 'http://website.com/users/list/foo/bar' the above would return 'http://website.com/users/list'.
 
 An alternate syntax is also available:
 
-	<?=$this->urlopts->Add('foo', 'bar')?>
+	<?=$this->URLopts->Add('foo', 'bar')?>
 
-	<?=$this->urlopts->Remove('foo')?>
+	<?=$this->URLopts->Remove('foo')?>

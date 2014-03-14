@@ -1,5 +1,5 @@
 <?
-require(dirname(__FILE__) . '/../libraries/urlopts.php');
+require(dirname(__FILE__) . '/../lib/urlopts.php');
 
 function ok($title, $returned, $expected) {
 	if ($returned === $expected) {
