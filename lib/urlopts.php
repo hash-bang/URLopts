@@ -26,15 +26,15 @@ class URLopts {
 	var $_ignore;
 
 	/**
-	* Whether to accept $_POST variables when processing arguments (basicly merges the return of Get() with $_POST)
-	* @var bool
+	* Where to accept variables from
+	* @var array
 	*/
-	var $_post;
+	var $_from;
 
 	function __construct() {
 		$this->_ignore = 3;
 		$this->_omitserver = 1;
-		$this->_post = false;
+		$this->_from = array('get' => 1, 'post' => 1, 'urlparams' => 1);
 	}
 
 	/**
@@ -64,10 +64,33 @@ class URLopts {
 
 	/**
 	* Set whether to merge POST variables with the return of Get()
+	* @depreciated Use From() instead
+	* @see From()
 	* @param bool $post Turn on the POST variable functionality
 	*/
 	function Post($post = true) {
-		$this->_post = $post;
+		$this->From('post', $post);
+	}
+
+	/**
+	* Sets where parameters can be taken
+	* e.g.
+	* 	$this->From('get') // Only allow from $_GET
+	*	$this->From('get', 0) // Disable from $_GET
+	*	$this->From(array('get', 'post')) // Only allow from $_GET and $_POST
+	*	$this->From('all') // Allow from all (default behaviour)
+	* @param string|array $what Either the individual option to change or an array of all options
+	* @param bool $set if $what is a string this sets whether it should be allowed
+	*/
+	function From($where = 'all', $set = TRUE) {
+		if ($where === 'all') { // Convenience funciton to turn everything on
+			foreach ($this->_from as $k => $v)
+				$this->_from[$k] = TRUE;
+		} elseif (is_string($where)) {
+			$this->_from[$where] = $set;
+		} elseif (is_array($where)) {
+			$this->_from = $where;
+		}
 	}
 	// }}}
 
@@ -85,17 +108,22 @@ class URLopts {
 			$this->Ignore($ignore);
 		$this->_opts = array();
 		$iskey = 0;
-		foreach ($stack as $index => $item) {
-			if ($index < $this->_ignore) // Skip ignored items
-				continue;
-			$iskey = !$iskey;
-			if ($iskey) {
-				$key = $item;
-			} else
-				$this->_opts[$key] = $item;
-		}
 
-		if ($this->_post)
+
+		if (isset($this->_from['urlparams']) && $this->_from['urlparams'])
+			foreach ($stack as $index => $item) {
+				if ($index < $this->_ignore) // Skip ignored items
+					continue;
+				$iskey = !$iskey;
+				if ($iskey) {
+					$key = $item;
+				} else
+					$this->_opts[$key] = $item;
+			}
+
+		if (isset($this->_from['get']) && $this->_from['get'])
+			$this->_opts = array_merge($this->_opts, $_GET);
+		if (isset($this->_from['post']) && $this->_from['post'])
 			$this->_opts = array_merge($this->_opts, $_POST);
 		return $this->_opts;
 	}
