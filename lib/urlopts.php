@@ -49,17 +49,21 @@ class URLopts {
 	/**
 	* Set whether the server should be omitted from the output URL
 	* @param bool $omit Whether the server should be omitted from the output URL
+	* @return object This chainable object
 	*/
 	function OmitServer($omit = TRUE) {
 		$this->_omitserver = $omit;
+		return $this;
 	}
 
 	/**
 	* Set the number of URL segments that should be ignored before processing the URL parameters
 	* @param int $ignore The number of segments to ignore
+	* @return object This chainable object
 	*/
 	function Ignore($ignore = 3) {
 		$this->_ignore = $ignore;
+		return $this;
 	}
 
 	/**
@@ -67,9 +71,10 @@ class URLopts {
 	* @depreciated Use From() instead
 	* @see From()
 	* @param bool $post Turn on the POST variable functionality
+	* @return object This chainable object
 	*/
 	function Post($post = true) {
-		$this->From('post', $post);
+		return $this->From('post', $post);
 	}
 
 	/**
@@ -81,6 +86,7 @@ class URLopts {
 	*	$this->From('all') // Allow from all (default behaviour)
 	* @param string|array $what Either the individual option to change or an array of all options
 	* @param bool $set if $what is a string this sets whether it should be allowed
+	* @return object This chainable object
 	*/
 	function From($where = 'all', $set = TRUE) {
 		if ($where === 'all') { // Convenience funciton to turn everything on
@@ -91,6 +97,7 @@ class URLopts {
 		} elseif (is_array($where)) {
 			$this->_from = $where;
 		}
+		return $this;
 	}
 	// }}}
 
@@ -100,6 +107,7 @@ class URLopts {
 	* so /controller/method/filter1/value1/filter2/value2 => array('filter1' => 'value1', 'filter2' => 'value2')
 	* @param null|array $stack The argument stack to process. If no specific stack is specified Segments() is automatically called
 	* @param int $ignore Quick method to call Ignore() before processing the stack
+	* @return array All extracted key/values as a hash
 	*/
 	function Get($stack = null, $ignore = null) {
 		if ($stack === null)
@@ -132,6 +140,7 @@ class URLopts {
 	* Set the currently active URL.
 	* This overrides the default method to magicly determine the active URL
 	* @param string $url The URL to force this module to use
+	* @return object This chainable object
 	*/
 	function Set($url) {
 		$url = rtrim($url, '/');
@@ -139,6 +148,7 @@ class URLopts {
 			$this->_url = (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : 'server.com') . $url; // Prepend the server or make one up
 		} else 
 			$this->_url = $url;
+		return $this;
 	}
 
 	/**
@@ -234,6 +244,7 @@ class URLopts {
 	* e.g. <a href="<?=$this->urlopts->Add('page', $page+1)?>">Next page</a>
 	* @param string $param The parameter to add
 	* @param string $value Optional new value to use. Set to false or omit to remove
+	* @return string The edited URL with the extra parameter added
 	*/
 	function Add($param, $value = FALSE) {
 		$replacenext = 0;
@@ -267,6 +278,7 @@ class URLopts {
 	* Remove a parameter from the URL and return the result
 	* This function is really just an alias for Add($param, FALSE)
 	* @param string $param The parameter to remove
+	* @return string The edited URL with the specified parameter removed
 	*/
 	function Remove($param) {
 		return $this->Add($param, FALSE);
