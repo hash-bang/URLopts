@@ -34,7 +34,7 @@ class URLopts {
 	function __construct() {
 		$this->_ignore = 3;
 		$this->_omitserver = 1;
-		$this->_from = array('get' => 1, 'post' => 1, 'urlparams' => 1);
+		$this->_from = array('get' => 1, 'post' => 1, 'urlparams' => 1, 'json' => 1);
 	}
 
 	/**
@@ -117,6 +117,14 @@ class URLopts {
 		$this->_opts = array();
 		$iskey = 0;
 
+
+		if (isset($this->_from['json']) && $this->_from['json']) {
+			if (
+				( $in = file_get_contents('php://input') ) && // Actually got some raw post data?
+				$json = json_decode($in, true) // AND it looks like JSON?
+			)
+			$this->_opts = $json;
+		}
 
 		if (isset($this->_from['urlparams']) && $this->_from['urlparams'])
 			foreach ($stack as $index => $item) {
